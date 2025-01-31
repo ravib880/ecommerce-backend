@@ -102,11 +102,12 @@ const createUser = async (req, res) => {
 const loginSchema = Joi.object({
     username: Joi.required(),
     password: Joi.required(),
+    role: Joi.optional(),
 }).options({ abortEarly: false })
 
 const loginUser = async (req, res) => {
     try {
-        const { username, password } = req?.body;
+        const { username, password, role } = req?.body;
 
         const user = await prisma.user.findFirst({
             where: {
@@ -124,13 +125,16 @@ const loginUser = async (req, res) => {
             },
         })
         if (!user) {
-            return res.status(401).json({ error: "Invalid username or password" })
+            return res.status(401).json({ error: "Invalid username or password!" })
         }
 
         const isValidPassword = await bcrypt.compare(password, user?.password)
 
         if (!isValidPassword) {
-            return res.status(401).json({ error: "Invalid username or password" })
+            return res.status(401).json({ error: "Invalid username or password!" })
+        }
+        if (!user?.role == (role ?? "USER")) {
+            return res.status(401).json({ error: "Access denied. Only admin can log in." })
         }
 
         // Create token
