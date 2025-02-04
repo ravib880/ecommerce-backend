@@ -99,13 +99,13 @@ const createUser = async (req, res) => {
     }
 }
 
-const loginSchema = Joi.object({
+const signInSchema = Joi.object({
     username: Joi.required(),
     password: Joi.required(),
     role: Joi.optional(),
 }).options({ abortEarly: false })
 
-const loginUser = async (req, res) => {
+const signInUser = async (req, res) => {
     try {
         const { username, password, role } = req?.body;
 
@@ -157,9 +157,38 @@ const loginUser = async (req, res) => {
     }
 }
 
+const signOutSchema = Joi.object({
+    token: Joi.required(),
+}).options({ abortEarly: false })
+
+const signOutUser = async (req, res) => {
+    try {
+        const { token } = req?.body;
+
+        const result = await prisma.userToken.deleteMany({
+            where: {
+                token
+            },
+        })
+
+        if (result.count === 0) {
+            return res.status(404).json({ error: "Token not found or already deleted" });
+        }
+
+        return res.status(200).json({ message: "Logout successfully!" })
+
+    } catch (error) {
+        // Return erroror response
+        await storeErrorLogs({ module: "logout-user", error })
+        return res.status(500).json({ error: "Internal server error", details: error?.message ?? "unknown error occurs!" });
+    }
+}
+
 module.exports = {
     userSchema,
     createUser,
-    loginSchema,
-    loginUser,
+    signInSchema,
+    signInUser,
+    signOutSchema,
+    signOutUser
 }
