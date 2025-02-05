@@ -38,7 +38,7 @@ model Variation {
 
 model Tag {
   id          Int       @id @default(autoincrement())
-  name        String
+  name        String    @unique
   thumbnail   String?
   description String?
   products    Product[] @relation("ProductTags")

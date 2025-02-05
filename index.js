@@ -1,18 +1,18 @@
 const express = require('express');
 const { router } = require('./src/routes');
 const app = express();
+const multer = require('multer');
 const cors = require('cors')
 
 const PORT = 4000;
 
 const allowedOrigins = [
-  'http://192.168.0.140',
   'https://app.printfuse.in',
 ];
 
 const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin) || origin.startsWith('http://localhost')) {
+    if (!origin || allowedOrigins.includes(origin) || origin.startsWith('http://192.168.0.140') || origin.startsWith('http://localhost')) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -22,6 +22,8 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 
+// Set storage engine for multer
+app.use("/uploads", express.static("uploads"));
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
