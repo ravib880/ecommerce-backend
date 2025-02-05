@@ -22,6 +22,7 @@ const createCategory = async (req, res) => {
                 }
             }
         })
+
         // If category name already defined then throw error 
         if (categoryList) {
             return res.status(400).json({ message: "The category name is already in use." });
@@ -44,8 +45,23 @@ const createCategory = async (req, res) => {
     }
 }
 
+const categoryList = async (req, res) => {
+    try {
+        const categoryData = await prisma.category.findMany({})
+        return res.status(200).json({
+            data: categoryData,
+            message: "All category!"
+        });
+    } catch (error) {
+        // Return erroror response
+        await storeErrorLogs({ module: "create-user", error })
+        return res.status(500).json({ error: "Internal server error", details: error?.message ?? "unknown error occurs!" });
+    }
+}
+
 
 module.exports = {
     categorySchema,
     createCategory,
+    categoryList,
 }
