@@ -12,7 +12,7 @@ const allowedOrigins = [
 
 const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin) || origin.startsWith('http://192.168.0.140') || origin.startsWith('http://localhost')) {
+    if (!origin || allowedOrigins.includes(origin) || origin.startsWith('http://192.168.0.142') || origin.startsWith('http://localhost')) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -24,10 +24,11 @@ const corsOptions = {
 
 // Set storage engine for multer
 app.use("/uploads", express.static("uploads"));
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
 
 app.use(cors(corsOptions))
+
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
 app.use('/api', router)
 

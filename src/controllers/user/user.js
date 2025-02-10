@@ -163,7 +163,8 @@ const signOutSchema = Joi.object({
 
 const signOutUser = async (req, res) => {
     try {
-        const { token } = req?.body;
+        const { tempToken } = req?.body;
+        const token = tempToken?.split(" ")[1]; // Assuming "Bearer <token>"
 
         const result = await prisma.userToken.deleteMany({
             where: {
